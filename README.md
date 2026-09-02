@@ -17,7 +17,7 @@
   <a href="https://www.youtube.com/@OmAILab_global">
     <img alt="YouTube" src="https://img.shields.io/badge/%F0%9F%93%A3%20YouTube-Subscribe%20%40OmAI%20lab-FF0000">
   </a>
-  <a href="https://discord.gg/c3BNhbcyd">
+  <a href="https://discord.gg/SEVNjyXPef">
     <img alt="Discord" src="https://img.shields.io/badge/%F0%9F%93%A3%20Discord-Join%20%40OmAI%20lab-5865F2">
   </a>
   <br>
