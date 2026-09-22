@@ -10,9 +10,9 @@ import importlib
 import json
 from pathlib import Path
 import sys
+import math
 
 from PIL import Image, ImageDraw
-
 
 DEFAULT_DETECTOR_CHECKPOINT = "resources/wedetect_base_uni.pth"
 WEDETECT_HF_REPO_ID = "fushh7/WeDetect"
@@ -89,6 +89,16 @@ def parse_args() -> argparse.Namespace:
             "region_ocr, e.g. --target-region-indexes '[0]'."
         )
     return args
+
+
+def _is_valid_xyxy(bbox: list | tuple) -> bool:
+    if not isinstance(bbox, (list, tuple)) or len(bbox) != 4:
+        return False
+    try:
+        x1, y1, x2, y2 = map(float, bbox)
+    except (TypeError, ValueError):
+        return False
+    return (math.isfinite(x1) and math.isfinite(y1) and math.isfinite(x2) and math.isfinite(y2) and x2 > x1 and y2 > y1)
 
 
 def load_boxes(boxes_json: str | None) -> list[list[float]] | None:
@@ -198,6 +208,9 @@ def load_wedetect_proposals(
     with torch.inference_mode():
         outputs = model([image])
         boxes = outputs[0]["bboxes"].float().cpu().tolist()
+
+    # Filter out invalid boxes
+    boxes = [box for box in boxes if _is_valid_xyxy(box)]
 
     del outputs, model
     torch.cuda.empty_cache()
