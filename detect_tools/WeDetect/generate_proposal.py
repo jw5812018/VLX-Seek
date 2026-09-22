@@ -1109,6 +1109,15 @@ class SimpleYOLOWorldDetector(nn.Module):
             results[i]['bboxes'][:, 0::2] = results[i]['bboxes'][:, 0::2].clamp_(0, ori_shapes[i][1])
             results[i]['bboxes'][:, 1::2] = results[i]['bboxes'][:, 1::2].clamp_(0, ori_shapes[i][0])
             # print(results[i]['bboxes'])
+        
+        # Filter out invalid boxes
+        for result in results:
+            bboxes = result["bboxes"]
+            valid = (bboxes[:, 2] > bboxes[:, 0]) & (bboxes[:, 3] > bboxes[:, 1])
+            result['bboxes'] = bboxes[valid]
+            result['embeddings'] = result['embeddings'][valid]
+            result['scores'] = result['scores'][valid]
+              
         return results
 
     def head_module_forward_single(
